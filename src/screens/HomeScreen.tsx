@@ -2,12 +2,14 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
 import { Text, FAB, Surface, useTheme } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getTransactions, getFinancialSummary, initDatabase } from '../database/db';
 import { Transaction } from '../utils/types';
 import TransactionItem from '../components/TransactionItem';
 
 const HomeScreen = ({ navigation }: any) => {
     const theme = useTheme();
+    const insets = useSafeAreaInsets();
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [summary, setSummary] = useState({ totalIncome: 0, totalExpense: 0, balance: 0 });
 
@@ -30,7 +32,7 @@ const HomeScreen = ({ navigation }: any) => {
     );
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { paddingTop: insets.top }]}>
             <Surface style={styles.summaryContainer} elevation={2}>
                 <View style={styles.balanceRow}>
                     <Text variant="titleMedium" style={{ color: '#666' }}>Total Balance</Text>
@@ -57,7 +59,7 @@ const HomeScreen = ({ navigation }: any) => {
                 data={transactions}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => <TransactionItem transaction={item} />}
-                contentContainerStyle={styles.listContent}
+                contentContainerStyle={[styles.listContent, { paddingBottom: 80 + insets.bottom }]}
                 ListEmptyComponent={
                     <View style={styles.emptyContainer}>
                         <Text variant="bodyLarge" style={{ color: '#888' }}>No transactions yet.</Text>
@@ -68,7 +70,7 @@ const HomeScreen = ({ navigation }: any) => {
 
             <FAB
                 icon="plus"
-                style={[styles.fab, { backgroundColor: theme.colors.primary }]}
+                style={[styles.fab, { backgroundColor: theme.colors.primary, marginBottom: 16 + insets.bottom }]}
                 color="white"
                 onPress={() => navigation.navigate('AddTransaction')}
             />

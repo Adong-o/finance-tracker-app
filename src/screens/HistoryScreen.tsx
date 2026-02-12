@@ -2,12 +2,14 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, SectionList, StyleSheet } from 'react-native';
 import { Text, Surface } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getTransactions } from '../database/db';
 import { Transaction } from '../utils/types';
 import TransactionItem from '../components/TransactionItem';
 import { format, parseISO, isSameDay } from 'date-fns';
 
 const HistoryScreen = () => {
+    const insets = useSafeAreaInsets();
     const [sections, setSections] = useState<{ title: string; data: Transaction[] }[]>([]);
 
     const loadData = useCallback(() => {
@@ -40,7 +42,7 @@ const HistoryScreen = () => {
     );
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { paddingTop: insets.top }]}>
             <SectionList
                 sections={sections}
                 keyExtractor={(item) => item.id.toString()}
@@ -50,7 +52,7 @@ const HistoryScreen = () => {
                         <Text variant="labelLarge" style={styles.headerText}>{title}</Text>
                     </Surface>
                 )}
-                contentContainerStyle={styles.listContent}
+                contentContainerStyle={[styles.listContent, { paddingBottom: 20 + insets.bottom }]}
 
                 stickySectionHeadersEnabled={false}
             />
